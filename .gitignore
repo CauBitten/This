@@ -1,0 +1,14 @@
+.vs
+Library
+Logs
+obj
+Packages
+ProjectSettings
+Temp
+UserSettings
+WebGL Builds
+.vsconfig
+*.csproj
+*.zip
+*.sln
+webgl_sharing

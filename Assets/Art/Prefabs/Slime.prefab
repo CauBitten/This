@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6659598000941119936}
   - component: {fileID: 8868550842070222046}
   - component: {fileID: 6328806971127657067}
-  - component: {fileID: 5082164592110728575}
+  - component: {fileID: 290906809571194359}
   m_Layer: 8
   m_Name: Slime
   m_TagString: Untagged
@@ -167,18 +167,25 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.1275358, y: 0.9600978}
   m_EdgeRadius: 0
---- !u!114 &5082164592110728575
-MonoBehaviour:
+--- !u!95 &290906809571194359
+Animator:
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1112069962743963539}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf547cf08984414bae5d8ed7f66b74b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChallengerController
-  challengerPrefab: {fileID: 0}
-  maxLife: 100
-  respawnTime: 5
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f9a62a7b94c839d429a7fcaf9debafa4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

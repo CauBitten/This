@@ -10,8 +10,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int maxLife = 100;
     private int currentLife;
 
-    [SerializeField] private float respawnTime = 5f;
-
     public float moveSpeed;
 
     public bool isMoving;
@@ -22,6 +20,8 @@ public class PlayerController : MonoBehaviour
 
     public LayerMask solidObjectsLayer;
     public LayerMask interactableLayer;
+
+    private int coins;
 
     public static PlayerController Instance { get; private set; }
 
@@ -37,12 +37,15 @@ public class PlayerController : MonoBehaviour
 
         animator = GetComponent<Animator>();
         currentLife = maxLife;
+        coins = 0;
     }
 
     public void HandleUpdate()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            PauseController.setPaused(!PauseController.IsGamePaused);
 
-        if (!isMoving)
+        if (!isMoving && !PauseController.IsGamePaused)
         {
             input.x = Input.GetAxisRaw("Horizontal");
             input.y = Input.GetAxisRaw("Vertical");
@@ -65,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
         animator.SetBool("isMoving", isMoving);
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !PauseController.IsGamePaused)
         {
             Attack();
             animator.SetTrigger("Attack");
@@ -141,24 +144,15 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("Player defeated!");
+        Debug.Log("You died!");
 
-        GameController.Instance.StartPlayerRespawn(palyerPrefab, transform.position, respawnTime);
-
-        Destroy(gameObject);
+        GameController.Instance.EndGame();
     }
 
-    public void ResetState()
+    public void AddCoins(int amount)
     {
-        isMoving = false;
-
-        if (animator != null)
-        {
-            animator.SetBool("isMoving", false);
-            
-            animator.SetFloat("moveX", 0);
-            animator.SetFloat("moveY", -1);
-        }
+        coins += amount;
+        Debug.Log($"Player Coins: {coins}");
     }
 
 }

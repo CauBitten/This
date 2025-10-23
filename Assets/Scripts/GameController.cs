@@ -1,5 +1,7 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -10,9 +12,14 @@ public enum GameState
 public class GameController : MonoBehaviour
 {
     [SerializeField] PlayerController playerPrefabReference; 
-    public PlayerController CurrentPlayer { get; private set; } 
+    public PlayerController CurrentPlayer { get; private set; }
 
     GameState state;
+
+    [Header("Timer Settings")]
+    [SerializeField] private float timeRemaining = 50f;
+    [SerializeField] private TMP_Text timerText; 
+    public bool timerIsRunning = true;
 
     public static GameController Instance { get; private set; }
 
@@ -39,10 +46,29 @@ public class GameController : MonoBehaviour
         };
 
         CurrentPlayer = FindFirstObjectByType<PlayerController>();
+
+        timerIsRunning = true;
+        UpdateTimerDisplay(timeRemaining);
     }
 
     private void Update()
     {
+        if (timerIsRunning)
+        {
+            if (timeRemaining > 0)
+            {
+                timeRemaining -= Time.deltaTime; 
+                UpdateTimerDisplay(timeRemaining); 
+            }
+            else
+            {
+                timeRemaining = 0;
+                timerIsRunning = false;
+
+                EndGame();
+            }
+        }
+
         if (state == GameState.FreeRoam)
         {
             if (CurrentPlayer != null)
@@ -56,6 +82,23 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void UpdateTimerDisplay(float timeToDisplay)
+    {
+        if (timeToDisplay < 0)
+        {
+            timeToDisplay = 0;
+        }
+
+        string timeFormat = string.Format("{0:F0}", timeToDisplay);
+
+        timerText.text = timeFormat;
+    }
+
+    public void AddTime(int amount)
+    {
+        timeRemaining += amount;
+    }
+
     public void StartRespawn(GameObject prefabToRespawn, Vector3 spawnPosition, float delay)
     {
         StartCoroutine(PerformRespawn(prefabToRespawn, spawnPosition, delay));
@@ -65,7 +108,7 @@ public class GameController : MonoBehaviour
     {
         if (prefab == null)
         {
-            Debug.LogError("Tentativa de respawn falhou: o prefab é nulo.");
+            Debug.LogError("Respawn try failed.");
             yield break; 
         }
 
@@ -78,30 +121,18 @@ public class GameController : MonoBehaviour
         Debug.Log($"{prefab.name} respawned!");
     }
 
-    public void StartPlayerRespawn(GameObject prefabToRespawn, Vector3 spawnPosition, float delay)
+    public void EndGame()
     {
-        StartCoroutine(PerformPlayerRespawn(prefabToRespawn, spawnPosition, delay));
+        timeRemaining = 0;
+        timerIsRunning = false;
+
+        SceneManager.LoadScene("GameOverScene");
     }
 
-    private IEnumerator PerformPlayerRespawn(GameObject prefab, Vector3 position, float delay)
+    public void WinGame()
     {
-        if (prefab == null)
-        {
-            Debug.LogError("Tentativa de respawn falhou: o prefab é nulo.");
-            yield break;
-        }
-
-        Debug.Log($"Waiting {delay} seconds to respawn {prefab.name}.");
-
-        yield return new WaitForSeconds(delay);
-
-        GameObject newPlayerObject = Instantiate(prefab, position, Quaternion.identity);
-        PlayerController newPlayer = newPlayerObject.GetComponent<PlayerController>();
-
-        CurrentPlayer = newPlayer;
-
-        newPlayer.ResetState();
-
-        Debug.Log($"{prefab.name} respawned!");
+        timerText.gameObject.SetActive(false);
+        WinController.setWin();
     }
+
 }
